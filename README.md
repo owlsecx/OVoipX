@@ -18,25 +18,20 @@
 
 ## 📌 Overview
 
-Offline VoIP / RTC server configuration auditor (Asterisk, FreeSWITCH, Kamailio, XMPP)
+
+OVoipX is an offline, read-only VoIP server configuration auditor for Asterisk and FreeSWITCH that parses sip.conf/pjsip.conf, extensions and FreeSWITCH XML with stdlib-only parsers. It flags default/weak SIP credentials, guest/anonymous access, toll-fraud dial-plan patterns, missing transport encryption (TLS/SRTP) and exposed management interfaces. Secrets are masked, findings are mapped to CWE and MITRE ATT&CK, and reports export to TXT, Markdown, JSON, CSV or SARIF.
 
 ---
 
 ## ✨ Features
 
-- Offline, read-only auditing of VoIP/RTC configs — nothing is sent on the network, nothing is modified
-- Asterisk chan_sip (sip.conf) + chan_pjsip (pjsip.conf) parser with templates, #include and inheritance
-- Dialplan analyzer (extensions.conf) — include-graph reachability from untrusted contexts to outbound trunks (toll fraud), System()/Shell() injection, unfiltered ${EXTEN} patterns, DISA, remote AGI
-- AMI (manager.conf), HTTP (http.conf) and ARI checks
-- FreeSWITCH vars.xml / event_socket / sofia / acl / directory / xml_rpc analyzer
-- Kamailio / OpenSIPS .cfg with #!define/#!ifdef preprocessor — pike, ratelimit, REGISTER auth, TLS
-- Prosody (prosody.cfg.lua) and ejabberd (ejabberd.yml) analyzers with a built-in mini YAML / Lua parser
-- Weak-secret engine (masked — secrets never printed)
-- CWE + MITRE ATT&CK mapping, score & A+…F grade
-- Exports TXT / Markdown / JSON / CSV / SARIF 2.1.0
-- Hardened configuration templates for every platform
-- Self-test demo (weak vs hardened corpora)
-- Full CLI mode (--asterisk, --root, --scan, ...)
+
+- Parsers for Asterisk sip.conf/pjsip.conf/extensions.conf/manager.conf and FreeSWITCH XML/vars
+- Credential checks: default/weak/plaintext SIP secrets (masked), guest/anonymous SIP access
+- Toll-fraud dial-plan analysis (unrestricted outbound contexts, dangerous patterns)
+- Transport security: missing TLS/SRTP, UDP SIP exposure and allowguest/allowtransfer risks
+- Management-interface exposure (AMI/ARI, ESL) binding and credential review
+- Secrets masked, CWE+ATT&CK mapping and TXT/MD/JSON/CSV/SARIF export with --fail-on gating
 
 ---
 
@@ -49,8 +44,13 @@ Offline VoIP / RTC server configuration auditor (Asterisk, FreeSWITCH, Kamailio,
 
 ## 🚀 Usage
 
+
 ```bash
-./OVoipX
+./OVoipX --scan -f sarif -o voip.sarif
+./OVoipX --sip /etc/asterisk/sip.conf --extensions /etc/asterisk/extensions.conf
+./OVoipX -r /mnt/image --fail-on high --json
+./OVoipX --demo
+./OVoipX --help
 ```
 
 ---
